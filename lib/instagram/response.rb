@@ -1,11 +1,8 @@
 module Instagram
   module Response
     def self.create( response_hash, ratelimit_hash )
-      unless response_hash.nil?
-        data = response_hash.data.dup
-      else
-        data = response_hash
-      end
+      return if handle_potential_error(response_hash)
+      data = response_hash.data.dup rescue response_hash
       data.extend( self )
       data.instance_exec do
         %w{pagination meta}.each do |k|
@@ -16,6 +13,17 @@ module Instagram
         @ratelimit = ::Hashie::Mash.new(ratelimit_hash)
       end
       data
+    end
+
+    def self.handle_potential_error(response_hash)
+      err = begin
+              response_hash['error_type'] == 'OAuthForbiddenException'
+            rescue nil
+            end
+
+      if err
+        raise Instagram::RequestNotSignedCorrectly, response_hash['error_message']
+      end
     end
 
     attr_reader :pagination

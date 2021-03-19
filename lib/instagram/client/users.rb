@@ -157,10 +157,8 @@ module Instagram
     #
     #   If getting this data of a protected user, you must authenticate (and be allowed to see that user).
     # @rate_limited true
-    def user_recent_media(*args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      id = args.first || "self"
-      response = get("users/#{id}/media/recent", options)
+    def user_recent_media(user_id, options={})
+      response = get("me/media?", options)
       response
     end
 
@@ -177,9 +175,8 @@ module Instagram
     # @format :json
     # @authenticated true
     # @rate_limited true
-    def user_liked_media(options={})
-      response = get("users/self/media/liked", options)
-      response
+    def user_liked_media(user_id, options={})
+      get("#{user_id}", options)
     end
 
     # Returns information about the current user's relationship (follow/following/etc) to another user
