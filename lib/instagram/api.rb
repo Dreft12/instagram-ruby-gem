@@ -12,7 +12,6 @@ module Instagram
     def initialize(options={})
       options = Instagram.options.merge(options)
       Configuration::VALID_OPTIONS_KEYS.each do |key|
-        p key
         send("#{key}=", options[key])
       end
     end

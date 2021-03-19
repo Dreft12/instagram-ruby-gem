@@ -28,7 +28,6 @@ module Instagram
 
     # Perform an HTTP request
     def request(method, path, options, signature=false, raw=false, unformatted=false, no_response_wrapper=false, signed=sign_requests)
-      p
       response = connection(raw).send(method) do |request|
         path = formatted_path(path) unless unformatted
         if signed == true
@@ -53,7 +52,6 @@ module Instagram
           request.headers["X-Insta-Forwarded-For"] = get_insta_fowarded_for(client_ips, client_secret)
         end
       end
-      p path
       return response if raw
       return response.body if no_response_wrapper
       return Response.create( response.body, {:limit => response.headers['x-ratelimit-limit'].to_i,
