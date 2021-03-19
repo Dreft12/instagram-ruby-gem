@@ -157,9 +157,8 @@ module Instagram
     #
     #   If getting this data of a protected user, you must authenticate (and be allowed to see that user).
     # @rate_limited true
-    def user_recent_media(user_id, options={})
-      response = get("me/media?", options)
-      response
+    def user_recent_media(user_id, is_next=nil, options={})
+      get("me/media?", options)
     end
 
     # Returns a list of media items liked by the current user
@@ -302,6 +301,10 @@ module Instagram
       options["action"] = "deny"
       response = post("users/#{id}/relationship", options, signature=true)
       response
+    end
+
+    def get_next_media(next_url, options={})
+      get_next_pagination(next_url, options)
     end
   end
 end

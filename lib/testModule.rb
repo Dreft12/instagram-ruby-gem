@@ -12,8 +12,9 @@ class TestModule
 
       @user = Instagram.client(:access_token => ACCESS_TOKEN)
 
-      p JSON.parse(@user.user_recent_media(USER_ID, {'fields' => 'id,caption,media_type,media_url,thumbnail_url,username,timestamp'}))
-      # p @user
+      @paging_next = JSON.parse(@user.user_recent_media(USER_ID, nil, {'fields' => 'id,caption,media_type,media_url,thumbnail_url,username,timestamp'}))['paging']['next']
+
+      p JSON.parse(@user.get_next_media(@paging_next, :access_token => nil))
     end
   end
 
