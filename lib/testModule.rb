@@ -14,7 +14,7 @@ class TestModule
 
       @paging_next = JSON.parse(@user.user_recent_media(USER_ID, nil, {'fields' => 'id,caption,media_type,media_url,thumbnail_url,username,timestamp'}))['paging']['next']
 
-      p JSON.parse(@user.get_next_media(@paging_next, :access_token => nil))
+      p JSON.parse(@user.get_next_media(@paging_next, {'fields' => 'id,caption,media_type,media_url,thumbnail_url,username,timestamp'}))
     end
   end
 

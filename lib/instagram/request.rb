@@ -85,7 +85,7 @@ module Instagram
         path = formatted_path(path) unless unformatted
         case method
         when :get, :delete
-          request.url(path, nil)
+          request.url(path, options)
         when :post, :put
           request.path = URI.encode(path)
           request.body = options unless options.empty?
