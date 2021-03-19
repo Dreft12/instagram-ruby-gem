@@ -26,4 +26,7 @@ module Instagram
   # Raised when a subscription payload hash is invalid
   class InvalidSignature < Error; end
 
+  # Raised when Instagram app settings require signed requests
+  # and no 'sig' parameter present
+  class RequestNotSignedCorrectly < Error; end
 end
