@@ -21,10 +21,7 @@ module Instagram
       def oembed(*args)
         url = args.first
         return nil unless url
-        completeUrl = "/https://api.instagram.com/oembed?url=#{url}"
-        p completeUrl
-        get(completeUrl, {}, false, false, true)
-          
+        get("/https://api.instagram.com/oembed?url=#{url}", {}, false, false, true)
         end
     end
   end
