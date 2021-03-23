@@ -157,7 +157,7 @@ module Instagram
     #
     #   If getting this data of a protected user, you must authenticate (and be allowed to see that user).
     # @rate_limited true
-    def user_recent_media(user_id, is_next=nil, options={})
+    def user_recent_media(options={})
       get("me/media?", options)
     end
 
