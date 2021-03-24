@@ -303,8 +303,63 @@ module Instagram
       response
     end
 
-    def get_next_media(next_url, options={})
-      get_next_pagination(next_url, options)
+    def get_next_media_list(next_url, options={})
+      get_object(next_url, options)
+    end
+
+    def get_media_from_album(id_media)
+      get_object("#{id_media}?",{'fields' => 'id,media_type,media_url,thumbnail_url,username,timestamp'} )
+    end
+
+    def retrieve_album_media(media_list)
+      media_children_ids = []
+      media_list.each_with_index do |object, index|
+        if object['media_type'] == 'CAROUSEL_ALBUM'
+          tmp = JSON.parse get_object("/#{object['id']}/children?", {'fields' => 'id'})
+          tmp['data'].each_with_index do |item, index|
+            media_children_ids.push item
+          end
+        end
+      end
+      media_children_ids
+    end
+
+    def get_media_from_all_user_post
+      all_media = []
+      tmp = JSON.parse(self.user_recent_media({'fields' => 'id,caption,media_type,media_url,thumbnail_url,username,timestamp'}))
+      while tmp != nil
+        tmp['data'].each_with_index do |item,index|
+          all_media.push item
+        end
+        if tmp['paging']['next'] != nil
+          begin
+            tmp = JSON.parse(self.get_next_media_list(tmp['paging']['next'], {'fields' => 'id,caption,media_type,media_url,thumbnail_url,username,timestamp'}))
+          rescue Instagram::BadRequest
+            puts "Fin del hilo 1"
+            Thread.exit
+          end
+        else
+          tmp = nil
+        end
+      end
+      all_media
+    end
+
+    def get_all_media_from_user_albums (media_list_id)
+      JSON.parse get_media_from_album(media_list_id)
+    end
+
+    def init_all_media_from_user
+      all_media = []
+      data = self.get_media_from_all_user_post
+      data.each_with_index do |item, index|
+        all_media.push item
+      end
+      tmp_id = self.retrieve_album_media data
+      tmp_id.each_with_index do |item, index|
+        all_media.push self.get_all_media_from_user_albums item['id']
+      end
+      all_media
     end
   end
 end

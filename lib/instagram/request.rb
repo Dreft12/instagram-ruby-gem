@@ -9,8 +9,8 @@ module Instagram
       request(:get, path, options, signature, raw, unformatted, no_response_wrapper, signed)
     end
 
-    def get_next_pagination(path, options={}, signature=false, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper())
-      get_next_pagination_request(:get, path, options, signature, raw, unformatted, no_response_wrapper)
+    def get_object(path, options={}, signature=false, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper())
+      request_object(:get, path, options, signature, raw, unformatted, no_response_wrapper)
     end
     # Perform an HTTP POST request
     def post(path, options={}, signature=false, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper(), signed=sign_requests)
@@ -80,7 +80,7 @@ module Instagram
       return OpenSSL::HMAC.hexdigest(digest, secret, sig)
     end
 
-    def get_next_pagination_request(method, path, options, signature=false, raw=false, unformatted=true, no_response_wrapper=false, signed=sign_requests)
+    def request_object(method, path, options, signature=false, raw=false, unformatted=true, no_response_wrapper=false, signed=sign_requests)
       response = connection(raw).send(method) do |request|
         path = formatted_path(path) unless unformatted
         case method
@@ -98,5 +98,7 @@ module Instagram
       return Response.create( response.body, {:limit => response.headers['x-ratelimit-limit'].to_i,
                                               :remaining => response.headers['x-ratelimit-remaining'].to_i} )
     end
+
+
   end
 end
