@@ -9,6 +9,9 @@ module Instagram
       request(:get, path, options, signature, raw, unformatted, no_response_wrapper, signed)
     end
 
+    def get_object(path, options={}, signature=false, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper())
+      request_object(:get, path, options, signature, raw, unformatted, no_response_wrapper)
+    end
     # Perform an HTTP POST request
     def post(path, options={}, signature=false, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper(), signed=sign_requests)
       request(:post, path, options, signature, raw, unformatted, no_response_wrapper, signed)
@@ -30,7 +33,6 @@ module Instagram
     def request(method, path, options, signature=false, raw=false, unformatted=false, no_response_wrapper=false, signed=sign_requests)
       response = connection(raw).send(method) do |request|
         path = formatted_path(path) unless unformatted
-        
         if signed == true
           if client_id != nil
             sig_options = options.merge({:client_id => client_id})
@@ -41,7 +43,7 @@ module Instagram
           sig = generate_sig("/"+path, sig_options, client_secret)
           options[:sig] = sig
         end
-        
+
         case method
         when :get, :delete
           request.url(URI.encode(path), options)
@@ -77,6 +79,26 @@ module Instagram
       digest = OpenSSL::Digest::Digest.new('sha256')
       return OpenSSL::HMAC.hexdigest(digest, secret, sig)
     end
+
+    def request_object(method, path, options, signature=false, raw=false, unformatted=true, no_response_wrapper=false, signed=sign_requests)
+      response = connection(raw).send(method) do |request|
+        path = formatted_path(path) unless unformatted
+        case method
+        when :get, :delete
+          request.url(path, options)
+        when :post, :put
+          request.path = URI.encode(path)
+          request.body = options unless options.empty?
+        else
+          request.url(path, nil)
+        end
+      end
+      return response if raw
+      return response.body if no_response_wrapper
+      return Response.create( response.body, {:limit => response.headers['x-ratelimit-limit'].to_i,
+                                              :remaining => response.headers['x-ratelimit-remaining'].to_i} )
+    end
+
 
   end
 end

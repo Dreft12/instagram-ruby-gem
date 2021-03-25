@@ -46,12 +46,12 @@ module Instagram
     # The endpoint that will be used to connect if none is set
     #
     # @note There is no reason to use any other endpoint at this time
-    DEFAULT_ENDPOINT = 'https://api.instagram.com/'.freeze
+    DEFAULT_ENDPOINT = 'https://graph.instagram.com/'.freeze
 
     # The response format appended to the path and sent in the 'Accept' header if none is set
     #
     # @note JSON is the only available format at this time
-    DEFAULT_FORMAT = :json
+    DEFAULT_FORMAT = nil
 
     # By default, don't use a proxy server
     DEFAULT_PROXY = nil
